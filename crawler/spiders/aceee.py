@@ -8,7 +8,7 @@ import re
 class AceeeSpider(CrawlSpider):
     name = 'aceee'
     start_urls = ('https://aceee.org/news-blog',)
-    datestring = '%Y-%m-%d'     # date formatting rule
+    datestring = '%Y-%m-%d'     # Date formatting pattern
     categories = []
     rules = (
         Rule(LinkExtractor(restrict_xpaths='//li[@class="next"]/a[contains(text(), "NEXT")]')),   # crawl pages
@@ -16,7 +16,9 @@ class AceeeSpider(CrawlSpider):
     )
 
     def parse_start_url(self, response):
-        # all categories from website
+        """
+        Parses and saves all categories listed on aceee.org
+        """
         self.categories = set(response.xpath('//h2[@class="pane-title" and contains(., "Blog Categories")]/..//a/text()').extract())
         return []
 
@@ -33,7 +35,7 @@ class AceeeSpider(CrawlSpider):
             article_body=re.sub(r'\s{2,}', ' ', re.sub(r'[^\x00-\x7F]+|[\t\n\r\f]+', ' ', ''.join(
                 response.xpath('//div[contains(@class, "left_common_cust")]//article//text()').extract()))).strip(),
             tags=raw_tags - self.categories,
-            external_links=set(map(lambda link: link.url, extractor.extract_links(response)))
+            external_links=list(map(lambda link: link.url, extractor.extract_links(response)))
         )
 
 
