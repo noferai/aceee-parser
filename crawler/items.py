@@ -1,10 +1,12 @@
 import scrapy
+import json
 
 
 class ArticleItem(scrapy.Item):
-    title = scrapy.Field()
-    pubdate = scrapy.Field()
-    categories = scrapy.Field()
-    article_body = scrapy.Field()
-    tags = scrapy.Field()
-    external_links = scrapy.Field()
+    id = scrapy.Field(serializer=int)
+    title = scrapy.Field(serializer=str)
+    pubdate = scrapy.Field(serializer=str)
+    categories = scrapy.Field(serializer=json.dumps)
+    article_body = scrapy.Field(serializer=str)
+    tags = scrapy.Field(serializer=json.dumps)
+    external_links = scrapy.Field(serializer=json.dumps)

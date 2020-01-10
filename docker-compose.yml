@@ -1,0 +1,21 @@
+version: "3.7"
+
+x-db-env: &db-env
+  POSTGRES_DB: aceee
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: pass
+
+services:
+  scrapy:
+    build: .
+    depends_on:
+      - database
+    environment:
+      <<: *db-env
+      POSTGRES_HOST: database
+    restart: always
+  database:
+    image: postgres
+    environment: *db-env
+    ports:
+      - "5432:5432"

@@ -1,4 +1,3 @@
-import json
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from crawler.models import db_connect, create_table, Article
@@ -12,16 +11,9 @@ class CrawlerPipeline(object):
 
     def process_item(self, item, spider):
         session = self.Session()
-        article = Article(
-            title=item['title'],
-            pubdate=item['pubdate'],
-            categories=json.dumps(list(item['categories'])),
-            article_body=item['article_body'],
-            tags=json.dumps(list(item['tags'])),
-            external_links=json.dumps(item['external_links']),
-        )
+        article = Article(**item)
         try:
-            session.add(article)
+            session.merge(article)
             session.commit()
         except SQLAlchemyError:
             session.rollback()
